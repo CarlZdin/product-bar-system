@@ -3,13 +3,16 @@
 ## 🚀 Setup Instructions
 
 ### 1️⃣ Install NestJS CLI & Create Project
+
 ```bash
 yarn global add @nestjs/cli
 nest new my-nestjs-app
 ```
+
 Select **Yarn** as the package manager.
 
 Move into your project:
+
 ```bash
 cd my-nestjs-app
 ```
@@ -17,6 +20,7 @@ cd my-nestjs-app
 ---
 
 ### 2️⃣ Install Prisma
+
 ```bash
 yarn add @prisma/client
 yarn add -D prisma
@@ -25,14 +29,18 @@ yarn add -D prisma
 ---
 
 ### 3️⃣ Initialize Prisma
+
 ```bash
 yarn prisma init
 ```
+
 This will create:
+
 - `prisma/` folder
 - `.env` file for database configuration
 
 #### Configure `.env` for Prisma:
+
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 ```
@@ -40,6 +48,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 ---
 
 ### 4️⃣ Define Prisma Schema (`prisma/schema.prisma`)
+
 ```prisma
 generator client {
   provider = "prisma-client-js"
@@ -60,10 +69,13 @@ model User {
 ```
 
 Run migrations:
+
 ```bash
 yarn prisma migrate dev --name init
 ```
+
 Generate Prisma Client:
+
 ```bash
 yarn prisma generate
 ```
@@ -71,6 +83,7 @@ yarn prisma generate
 ---
 
 ### 5️⃣ Register Prisma in `app.module.ts`
+
 ```typescript
 import { Module } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
@@ -86,12 +99,15 @@ export class AppModule {}
 ---
 
 ### 6️⃣ Generate User Resource (CRUD + Auth)
+
 ```bash
 nest g resource user
 ```
+
 This will generate a **User Module, Controller, and Service**.
 
 Modify `user.service.ts` to handle authentication:
+
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -119,6 +135,7 @@ export class UserService {
 ```
 
 Modify `user.controller.ts` to add auth endpoints:
+
 ```typescript
 import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -128,7 +145,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
-  async signUp(@Body() body: { name: string; email: string; password: string }) {
+  async signUp(
+    @Body() body: { name: string; email: string; password: string },
+  ) {
     return this.userService.signUp(body.name, body.email, body.password);
   }
 
@@ -142,11 +161,13 @@ export class UserController {
 ---
 
 ### 7️⃣ Start NestJS Server
+
 ```bash
 yarn start:dev
 ```
 
 Visit **`http://localhost:3000/users/signup`** and send a `POST` request with:
+
 ```json
 {
   "name": "John Doe",
@@ -156,6 +177,7 @@ Visit **`http://localhost:3000/users/signup`** and send a `POST` request with:
 ```
 
 To log in, send a `POST` request to `http://localhost:3000/users/signin` with:
+
 ```json
 {
   "email": "test@example.com",
@@ -166,6 +188,7 @@ To log in, send a `POST` request to `http://localhost:3000/users/signin` with:
 ---
 
 ## ✅ Done!
+
 You now have **NestJS + Prisma** running with **Yarn**! 🎉
 
 You can now extend it with **JWT authentication, middleware, roles, permissions**, and more!

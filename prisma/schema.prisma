@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  name               String
+  email              String        @unique
+  password           String
+  credits            Float         @default(0)
+  createdAt          DateTime      @default(now())
+  passwordResetToken String?
+  id                 Int           @id @default(autoincrement())
+  redemptions        Redemption[]
+  sessions           Session[]
+  transactions       Transaction[]
+}
+
+model Session {
+  checkInAt   DateTime
+  checkOutAt  DateTime?
+  durationMin Int?
+  cost        Float?
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model Redemption {
+  redeemedAt DateTime @default(now())
+  cost       Float    @default(2)
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  type      String
+  amount    Float
+  timestamp DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
