@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MembershipModule } from './membership/membership.module';
+import { SessionModule } from './session/session.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MembershipModule } from './membership/membership.module';
     SupabaseModule,
     PrismaModule,
     MembershipModule,
+    SessionModule,
   ],
   // controllers: [AuthController],
   // providers: [SupabaseService],

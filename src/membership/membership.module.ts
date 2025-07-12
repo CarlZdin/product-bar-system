@@ -11,7 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
     PrismaModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '6h' },
+      signOptions: { expiresIn: '12h' },
     }),
   ],
   providers: [MembershipService],

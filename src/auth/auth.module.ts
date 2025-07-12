@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersModule } from 'src/users/users.module';
-import { SupabaseModule } from '../supabase/supabase.module';
-import { MembershipModule } from '../membership/membership.module';
+import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { SupabaseModule } from 'src/supabase/supabase.module';
+import { MembershipService } from 'src/membership/membership.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtAuthGuard, MembershipService, PrismaService],
   imports: [
     UsersModule,
     SupabaseModule,
-    MembershipModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '6h' },
+      signOptions: { expiresIn: '12h' },
     }),
   ],
+  exports: [JwtAuthGuard],
 })
 export class AuthModule {}
