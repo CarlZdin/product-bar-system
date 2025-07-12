@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { SupabaseService } from '../supabase/supabase.service';
+import { MembershipService } from '../membership/membership.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -10,6 +11,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly supabaseService: SupabaseService,
     private readonly jwtService: JwtService,
+    private readonly membershipService: MembershipService,
   ) {}
 
   async register(name: string, email: string, password: string) {
@@ -29,13 +31,20 @@ export class AuthService {
     });
     if (error) throw new BadRequestException(error.message);
 
-    await this.usersService.createUser({
+    const user = await this.usersService.createUser({
       name,
       email,
       password: hashedPassword,
     });
 
-    return { message: 'Registration successful. You can now log in.' };
+    const payload = { email: user.email, sub: user.id };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      message: 'Registration successful. Please Proceed to payment.',
+      userId: user.id,
+      token,
+    };
   }
 
   async login(email: string, password: string) {

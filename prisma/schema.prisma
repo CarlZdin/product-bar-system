@@ -19,6 +19,7 @@ model User {
   redemptions        Redemption[]
   sessions           Session[]
   transactions       Transaction[]
+  cardInformation    CardInformation?
 }
 
 model Session {
@@ -46,4 +47,15 @@ model Transaction {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model CardInformation {
+  id          Int      @id @default(autoincrement())
+  cardNumber  String   
+  expiryDate  String
+  cvv         String    
+  name        String
+  userId      Int       @unique
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
 }

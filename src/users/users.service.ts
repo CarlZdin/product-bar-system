@@ -24,4 +24,11 @@ export class UsersService {
       data: { password },
     });
   }
+
+  async updateCredits(userId: number, credits: number): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { credits },
+    });
+  }
 }
