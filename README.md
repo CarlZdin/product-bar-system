@@ -5,13 +5,13 @@
 ### 1️⃣ Install Dependencies
 
 ```bash
-yarn install
+npm install
 ```
 
 ### 2️⃣ Start the Development Server
 
 ```bash
-yarn start:dev
+npm run start:dev
 ```
 
 The server will start at `http://localhost:3000`.
@@ -27,7 +27,7 @@ Ensure the `prisma/schema.prisma` file is configured correctly.
 Run the following command to initialize Prisma:
 
 ```bash
-yarn prisma init
+npx prisma init
 ```
 
 ### 2️⃣ Apply Migrations
@@ -35,7 +35,7 @@ yarn prisma init
 Run the following command to apply migrations:
 
 ```bash
-yarn prisma migrate dev --name <migration_name>
+npx prisma migrate dev --name <migration_name>
 ```
 
 ### 3️⃣ Generate Prisma Client
@@ -43,7 +43,7 @@ yarn prisma migrate dev --name <migration_name>
 Run the following command to generate the Prisma client:
 
 ```bash
-yarn prisma generate
+npx prisma generate
 ```
 
 ---
@@ -55,12 +55,13 @@ yarn prisma generate
 Create a `.env` file in the root directory and add the following variables:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
-JWT_SECRET="your_jwt_secret"
+SUPABASE_URL=""
+SUPABASE_ANON_KEY="" 
+JWT_SECRET="" //your_JWT_secret_key
+DATABASE_URL="" //transaction pooler
+DIRECT_URL="" //session pooler
 ENCRYPTION_ALGO1="aes-256-cbc"
 ```
-
-Replace `user`, `password`, `localhost`, `5432`, and `mydb` with your database credentials.
 
 ---
 
@@ -74,7 +75,7 @@ Replace `user`, `password`, `localhost`, `5432`, and `mydb` with your database c
 ```json
 {
   "name": "John Doe",
-  "email": "john.doe@example.com",
+  "email": "john.doe@example.com", //use your real email
   "password": "password123"
 }
 ```
@@ -162,10 +163,15 @@ Authorization: Bearer <token>
 **Endpoint:** `POST /auth/set-password`
 
 **Body:**
+```Bash
+Password Reset Link
+http://localhost:3000/reset-password#access_token="access_token"&expires_at=1752277099&expires_in=3600&refresh_token="refresh_token"&token_type=bearer&type=recovery
+```
 ```json
 {
-  "token": "<reset-token>",
-  "newPassword": "newpassword123"
+  "access_token": "",
+  "refresh_token": "",
+  "new_password": "newpassword"
 }
 ```
 
