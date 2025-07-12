@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private tokenBlacklist: Set<string> = new Set();
   constructor(
     private readonly usersService: UsersService,
     private readonly supabaseService: SupabaseService,
@@ -95,5 +96,19 @@ export class AuthService {
     await this.usersService.updatePassword(userEmail, hashedPassword);
 
     return { message: 'Password has been reset.', user: data.user };
+  }
+
+  async logout(token: string): Promise<{ message: string }> {
+    if (!token) {
+      throw new BadRequestException('Token is required for logout.');
+    }
+
+    this.tokenBlacklist.add(token); // Add the token to the blacklist
+
+    return { message: 'Logout successful. Token invalidated.' };
+  }
+
+  isTokenBlacklisted(token: string): boolean {
+    return this.tokenBlacklist.has(token); // Check if the token is blacklisted
   }
 }

@@ -1,4 +1,12 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  BadRequestException,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('auth')
@@ -37,5 +45,17 @@ export class AuthController {
       body.refresh_token,
       body.new_password,
     );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  async logout(@Req() req: any) {
+    const authorization = req.headers.authorization;
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+      throw new BadRequestException('Bearer token is required for logout.');
+    }
+
+    const token = authorization.split(' ')[1];
+    return this.authService.logout(token);
   }
 }
