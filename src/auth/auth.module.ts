@@ -7,10 +7,17 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { SupabaseModule } from 'src/supabase/supabase.module';
 import { MembershipService } from 'src/membership/membership.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { TransactionService } from 'src/transaction/transaction.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, MembershipService, PrismaService],
+  providers: [
+    AuthService,
+    JwtAuthGuard,
+    MembershipService,
+    PrismaService,
+    TransactionService,
+  ],
   imports: [
     UsersModule,
     SupabaseModule,

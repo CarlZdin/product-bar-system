@@ -1,21 +1,20 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
+import { TransactionService } from '../transaction/transaction.service';
 
 @Injectable()
 export class SessionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   async checkIn(userId: number): Promise<string> {
-    const existingSession = await this.prisma.session.findFirst({
-      where: { userId, checkOutAt: null },
-    });
-
-    if (existingSession) {
-      throw new BadRequestException('You already have an active session.');
+    const user = await this.usersService.findUserById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found.');
     }
 
     await this.prisma.session.create({
@@ -27,7 +26,6 @@ export class SessionService {
 
     return 'Check-in successful.';
   }
-
   async checkOut(userId: number): Promise<string> {
     const session = await this.prisma.session.findFirst({
       where: { userId, checkOutAt: null },
@@ -53,6 +51,13 @@ export class SessionService {
     });
 
     await this.usersService.updateCredits(userId, user.credits - cost);
+
+    // Log the transaction
+    await this.transactionService.logTransaction(
+      userId,
+      'Session Checkout',
+      cost,
+    );
 
     return `Check-out successful. Duration: ${durationHours} hours. Cost: $${cost}.`;
   }

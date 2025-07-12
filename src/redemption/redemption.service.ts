@@ -1,12 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
+import { TransactionService } from '../transaction/transaction.service';
 
 @Injectable()
 export class RedemptionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   async redeemProduct(userId: number): Promise<string> {
@@ -40,6 +42,13 @@ export class RedemptionService {
     });
 
     await this.usersService.updateCredits(userId, user.credits - productCost);
+
+    // Log the transaction
+    await this.transactionService.logTransaction(
+      userId,
+      'Product Redemption',
+      productCost,
+    );
 
     return 'Product redeemed successfully.';
   }

@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { TransactionService } from '../transaction/transaction.service';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -8,6 +9,7 @@ export class MembershipService {
   constructor(
     private readonly usersService: UsersService,
     private readonly prisma: PrismaService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   async processPaymentDetails(
@@ -38,6 +40,13 @@ export class MembershipService {
           },
         });
         await this.usersService.updateCredits(userId, membershipCredits);
+
+        // Log the transaction
+        await this.transactionService.logTransaction(
+          userId,
+          'Membership Payment',
+          membershipCredits,
+        );
 
         return true;
       } catch (error) {
